@@ -94,23 +94,34 @@ def append_to_yaml(master_file, network_services_key, vrf_name, new_svi):
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    # Load existing tenants and VRFs for dropdowns
     master_yaml = load_yaml(MASTER_YAML_FILE)
     tenants = sorted(master_yaml.keys())  # Get list of existing tenants
-    
-    # Get VRFs for each tenant
-    tenant_vrfs = {
-        tenant: [vrf["name"] for tenant_data in master_yaml[tenant] if "vrfs" in tenant_data for vrf in tenant_data["vrfs"]]
-        for tenant in tenants
-    }
+
+    # Get a list of ALL VRFs across ALL tenants
+    all_vrfs = set()
+    for tenant_list in master_yaml.values():
+        if isinstance(tenant_list, list):
+            for tenant in tenant_list:
+                if "vrfs" in tenant and isinstance(tenant["vrfs"], list):
+                    all_vrfs.update(vrf["name"] for vrf in tenant["vrfs"])
 
     if request.method == "POST":
         network_services_key = request.form.get("business_unit")  # Tenant Key
+        custom_tenant = request.form.get("custom_tenant")  # If new tenant is provided
         vrf_name = request.form.get("vrf_name")
+        custom_vrf = request.form.get("custom_vrf")  # If new VRF is provided
         vlan_id = request.form.get("vlan_id")
         svi_name = request.form.get("svi_name")
         ip_address = request.form.get("ip_address")
         enabled = request.form.get("enabled")
+
+        # Use custom tenant if provided
+        if network_services_key == "custom" and custom_tenant:
+            network_services_key = custom_tenant
+
+        # Use custom VRF if provided
+        if vrf_name == "custom" and custom_vrf:
+            vrf_name = custom_vrf
 
         if not (network_services_key and vrf_name and vlan_id and svi_name and ip_address and enabled):
             flash("All fields are required!", "danger")
@@ -135,9 +146,7 @@ def index():
         append_to_yaml(MASTER_YAML_FILE, network_services_key, vrf_name, new_svi)
         return redirect(url_for("index"))
 
-    return render_template("form.html", tenants=tenants, tenant_vrfs=tenant_vrfs)
-
-
+    return render_template("form.html", tenants=tenants, all_vrfs=sorted(all_vrfs))
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -102,3 +102,8 @@ l3_edge:
       nodes: [dc1-leaf2b, dc2-leaf2b]
       interfaces: [Ethernet6, Ethernet6]
       profile: DCI_profile
+
+network_services_keys:
+  - name: tenant-a
+  - name: tenant-b
+  - name: tenant-c

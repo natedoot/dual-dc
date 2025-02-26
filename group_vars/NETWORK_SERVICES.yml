@@ -1,16 +1,16 @@
-tenants:
-- name: TENANT1
+tenant-a:
+- name: tenant-a
   mac_vrf_vni_base: 10000
   vrfs:
   - name: VRF10
     vrf_vni: 10
     bgp_peer_groups:
-      - name: OVERLAY-EXTERNAL-PEERS
-        nodes:
-          - dc1-leaf2a
-          - dc1-leaf2b
-          - dc2-leaf2a
-          - dc2-leaf2b
+    - name: OVERLAY-EXTERNAL-PEERS
+      nodes:
+      - dc1-leaf2a
+      - dc1-leaf2b
+      - dc2-leaf2a
+      - dc2-leaf2b
     vtep_diagnostic:
       loopback: 10
       loopback_ip_range: 172.255.10.0/27
@@ -19,30 +19,30 @@ tenants:
       vxlan: false
       name: 9504_BGP_Transit1
       nodes:
-        - node: dc1-leaf2a
-          enabled: true
-          ip_address: 192.168.5.1/30
+      - node: dc1-leaf2a
+        enabled: true
+        ip_address: 192.168.5.1/30
     - id: 2001
       vxlan: false
       name: 9504_BGP_Transit2
       nodes:
-        - node: dc1-leaf2b
-          enabled: true
-          ip_address: 192.168.5.5/30
+      - node: dc1-leaf2b
+        enabled: true
+        ip_address: 192.168.5.5/30
     - id: 2002
       vxlan: false
       name: 9504_BGP_Transit3
       nodes:
-        - node: dc2-leaf2a
-          enabled: true
-          ip_address: 192.168.5.9/30
+      - node: dc2-leaf2a
+        enabled: true
+        ip_address: 192.168.5.9/30
     - id: 2003
       vxlan: false
       name: 9504_BGP_Transit4
       nodes:
-        - node: dc2-leaf2b
-          enabled: true
-          ip_address: 192.168.5.13/30
+      - node: dc2-leaf2b
+        enabled: true
+        ip_address: 192.168.5.13/30
     - id: 11
       name: VRF10_VLAN11
       enabled: true
@@ -74,3 +74,14 @@ tenants:
     name: L2_VLAN3401
   - id: 3402
     name: L2_VLAN3402
+tenant-b:
+- name: tenant-b
+  mac_vrf_vni_base: 10000
+  vrfs:
+  - name: VRF10
+    vrf_vni: 10
+    svis:
+    - id: 100
+      name: VRF10_VLAN100
+      ip_address: 10.10.100.1/24
+      enabled: true
