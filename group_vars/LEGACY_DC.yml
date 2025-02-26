@@ -1,0 +1,31 @@
+---
+fabric_ip_addressing:
+  mlag:
+    algorithm: same_subnet
+    
+l3leaf:
+  defaults:
+    platform: vEOS-lab
+    loopback_ipv4_pool: 1.1.1.0/24
+    vtep_loopback_ipv4_pool: 2.2.2.0/24
+    mlag_peer_ipv4_pool: 169.254.0.0/31
+    mlag_peer_l3_ipv4_pool: 192.0.0.0/31
+  node_groups:
+    - group: DC1_EDGE
+      bgp_as: 65300
+      nodes:
+        - name: dc1-lf-edge1
+          id: 1
+          mgmt_ip: 172.16.1.30/24
+        - name: dc1-lf-edge2
+          id: 2
+          mgmt_ip: 172.16.1.31/24
+    - group: DC2_EDGE
+      bgp_as: 65301
+      nodes:
+        - name: dc2-lf-edge1
+          id: 3
+          mgmt_ip: 172.16.1.32/24
+        - name: dc2-lf-edge2
+          id: 4
+          mgmt_ip: 172.16.1.33/24

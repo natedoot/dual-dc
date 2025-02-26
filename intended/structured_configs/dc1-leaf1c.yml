@@ -1,0 +1,119 @@
+aaa_root:
+  disabled: true
+config_end: true
+daemon_terminattr:
+  cvaddrs:
+  - 172.16.1.5:9910
+  cvauth:
+    method: token
+    token_file: /tmp/token
+  cvvrf: default
+  disable_aaa: true
+  ingestexclude: /Sysdb/cell/1/agent,/Sysdb/cell/2/agent
+  smashexcludes: ale,flexCounter,hardware,kni,pulse,strata
+enable_password:
+  disabled: true
+ethernet_interfaces:
+- name: Ethernet1
+  description: L2_dc1-leaf1a_Ethernet8
+  shutdown: false
+  channel_group:
+    id: 1
+    mode: active
+  peer: dc1-leaf1a
+  peer_interface: Ethernet8
+  peer_type: l3leaf
+- name: Ethernet2
+  description: L2_dc1-leaf1b_Ethernet8
+  shutdown: false
+  channel_group:
+    id: 1
+    mode: active
+  peer: dc1-leaf1b
+  peer_interface: Ethernet8
+  peer_type: l3leaf
+hostname: dc1-leaf1c
+ip_igmp_snooping:
+  globally_enabled: true
+is_deployed: true
+local_users:
+- name: admin
+  privilege: 15
+  role: network-admin
+  no_password: true
+- name: cvpadmin
+  privilege: 15
+  role: network-admin
+  sha512_password: $6$JIWpYntS5KpTMCGF$el6rGKnDYPqxKeMcJGutPctkOMiHrV/bej1DTmdTR8jEnuV/gQbTYa76slNHP1vwyN8Gq2kbNsMmXUwVhkwjy1
+management_api_http:
+  enable_https: true
+  enable_vrfs:
+  - name: default
+management_interfaces:
+- name: Management1
+  description: OOB_MANAGEMENT
+  shutdown: false
+  vrf: default
+  ip_address: 172.16.1.151/24
+  type: oob
+metadata:
+  platform: vEOS-lab
+  fabric_name: FABRIC
+port_channel_interfaces:
+- name: Port-Channel1
+  description: L2_DC1_L3_LEAF1_Port-Channel8
+  shutdown: false
+  switchport:
+    enabled: true
+    mode: trunk
+    trunk:
+      allowed_vlan: 11-12,21-22,100,2000-2003,3401-3402
+service_routing_protocols_model: multi-agent
+spanning_tree:
+  mode: mstp
+  mst_instances:
+  - id: '0'
+    priority: 32768
+transceiver_qsfp_default_mode_4x10: true
+vlan_internal_order:
+  allocation: ascending
+  range:
+    beginning: 1006
+    ending: 1199
+vlans:
+- id: 11
+  name: VRF10_VLAN11
+  tenant: TENANT1
+- id: 12
+  name: VRF10_VLAN12
+  tenant: TENANT1
+- id: 100
+  name: VRF10_VLAN100
+  tenant: TENANT1
+- id: 2000
+  name: 9504_BGP_Transit1
+  tenant: TENANT1
+- id: 2001
+  name: 9504_BGP_Transit2
+  tenant: TENANT1
+- id: 2002
+  name: 9504_BGP_Transit3
+  tenant: TENANT1
+- id: 2003
+  name: 9504_BGP_Transit4
+  tenant: TENANT1
+- id: 21
+  name: VRF11_VLAN21
+  tenant: TENANT1
+- id: 22
+  name: VRF11_VLAN22
+  tenant: TENANT1
+- id: 3401
+  name: L2_VLAN3401
+  tenant: TENANT1
+- id: 3402
+  name: L2_VLAN3402
+  tenant: TENANT1
+vrfs:
+- name: default
+  ip_routing: false

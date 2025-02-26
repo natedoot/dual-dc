@@ -1,0 +1,9 @@
+---
+custom_structured_configuration_router_bgp:
+  vrfs:
+    - name: VRF10
+      neighbors:
+        - ip_address: 192.168.5.2
+          peer_group: OVERLAY-EXTERNAL-PEERS
+          remote_as: 64512
+          description: "9504"

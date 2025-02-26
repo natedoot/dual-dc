@@ -1,0 +1,76 @@
+tenants:
+- name: TENANT1
+  mac_vrf_vni_base: 10000
+  vrfs:
+  - name: VRF10
+    vrf_vni: 10
+    bgp_peer_groups:
+      - name: OVERLAY-EXTERNAL-PEERS
+        nodes:
+          - dc1-leaf2a
+          - dc1-leaf2b
+          - dc2-leaf2a
+          - dc2-leaf2b
+    vtep_diagnostic:
+      loopback: 10
+      loopback_ip_range: 172.255.10.0/27
+    svis:
+    - id: 2000
+      vxlan: false
+      name: 9504_BGP_Transit1
+      nodes:
+        - node: dc1-leaf2a
+          enabled: true
+          ip_address: 192.168.5.1/30
+    - id: 2001
+      vxlan: false
+      name: 9504_BGP_Transit2
+      nodes:
+        - node: dc1-leaf2b
+          enabled: true
+          ip_address: 192.168.5.5/30
+    - id: 2002
+      vxlan: false
+      name: 9504_BGP_Transit3
+      nodes:
+        - node: dc2-leaf2a
+          enabled: true
+          ip_address: 192.168.5.9/30
+    - id: 2003
+      vxlan: false
+      name: 9504_BGP_Transit4
+      nodes:
+        - node: dc2-leaf2b
+          enabled: true
+          ip_address: 192.168.5.13/30
+    - id: 11
+      name: VRF10_VLAN11
+      enabled: true
+      ip_address_virtual: 10.10.11.1/24
+    - id: 12
+      name: VRF10_VLAN12
+      enabled: true
+      ip_address_virtual: 10.10.12.1/24
+    - id: 100
+      name: VRF10_VLAN100
+      ip_address: 10.10.100.1/24
+      enabled: true
+  - name: VRF11
+    vrf_vni: 11
+    vtep_diagnostic:
+      loopback: 11
+      loopback_ip_range: 10.255.11.0/27
+    svis:
+    - id: 21
+      name: VRF11_VLAN21
+      enabled: true
+      ip_address_virtual: 10.10.21.1/24
+    - id: 22
+      name: VRF11_VLAN22
+      enabled: true
+      ip_address_virtual: 10.10.22.1/24
+  l2vlans:
+  - id: 3401
+    name: L2_VLAN3401
+  - id: 3402
+    name: L2_VLAN3402

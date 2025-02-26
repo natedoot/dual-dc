@@ -1,0 +1,61 @@
+[
+  {
+    "name": "dc1-leaf1c",
+    "test": "VerifyLLDPNeighbors",
+    "categories": [
+      "connectivity"
+    ],
+    "description": "Verifies the connection status of the specified LLDP (Link Layer Discovery Protocol) neighbors.",
+    "result": "success",
+    "custom_field": "Local: Ethernet1 - Remote: dc1-leaf1a Ethernet8"
+  },
+  {
+    "name": "dc1-leaf1c",
+    "test": "VerifyLLDPNeighbors",
+    "categories": [
+      "connectivity"
+    ],
+    "description": "Verifies the connection status of the specified LLDP (Link Layer Discovery Protocol) neighbors.",
+    "result": "success",
+    "custom_field": "Local: Ethernet2 - Remote: dc1-leaf1b Ethernet8"
+  },
+  {
+    "name": "dc1-leaf1c",
+    "test": "VerifyInterfacesStatus",
+    "categories": [
+      "interfaces"
+    ],
+    "description": "Verifies the operational states of specified interfaces to ensure they match expected configurations.",
+    "result": "success",
+    "custom_field": "Interface Ethernet1 - L2_dc1-leaf1a_Ethernet8 = 'up'"
+  },
+  {
+    "name": "dc1-leaf1c",
+    "test": "VerifyInterfacesStatus",
+    "categories": [
+      "interfaces"
+    ],
+    "description": "Verifies the operational states of specified interfaces to ensure they match expected configurations.",
+    "result": "success",
+    "custom_field": "Interface Ethernet2 - L2_dc1-leaf1b_Ethernet8 = 'up'"
+  },
+  {
+    "name": "dc1-leaf1c",
+    "test": "VerifyInterfacesStatus",
+    "categories": [
+      "interfaces"
+    ],
+    "description": "Verifies the operational states of specified interfaces to ensure they match expected configurations.",
+    "result": "success",
+    "custom_field": "Interface Port-Channel1 - L2_DC1_L3_LEAF1_Port-Channel8 = 'up'"
+  },
+  {
+    "name": "dc1-leaf1c",
+    "test": "VerifyReloadCause",
+    "categories": [
+      "system"
+    ],
+    "description": "Verifies the last reload cause of the device.",
+    "result": "success"
+  }
+]

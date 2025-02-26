@@ -1,0 +1,38 @@
+---
+# build.yml
+
+- name: Build Configs
+  hosts: FABRIC
+  gather_facts: false
+  tasks:
+
+    - name: Generate AVD Structured Configurations and Fabric Documentation
+      ansible.builtin.import_role:
+        name: arista.avd.eos_designs
+
+    - name: Generate Device Configurations and Documentation
+      ansible.builtin.import_role:
+        name: arista.avd.eos_cli_config_gen
+    
+    # - name: Gen ACT Topo
+    #   ansible.builtin.import_role:  
+    #     name: act_topology_gen
+    #   vars:
+    #     non_fabric_nodes:
+    #       - dc1-leaf1-server1:
+    #           ip_addr: 172.16.1.40
+    #           node_type: veos
+    #       - dc1-leaf2-server1:
+    #           ip_addr: 172.16.1.41
+    #           node_type: veos
+    #       - dc2-leaf1-server1:
+    #           ip_addr: 172.16.1.42
+    #           node_type: veos
+    #       - dc2-leaf2-server1:
+    #           ip_addr: 172.16.1.43
+    #           node_type: veos
+    #     connected_endpoints: true
+    #     veos_version: 4.32.3M
+    #     act_cvp_version: 2024.3.1
+    #     act_cvp_ip: 172.16.1.5
+    #     act_add_ansible_node: false
