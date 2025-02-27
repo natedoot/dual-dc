@@ -1,0 +1,11 @@
+tenant-c:
+- name: tenant-c
+  mac_vrf_vni_base: 10000
+  vrfs:
+  - name: VRF12
+    vrf_vni: 1
+    svis:
+    - id: 50
+      name: VRF12_VLAN50
+      ip_address: 10.10.50.1/24
+      enabled: true

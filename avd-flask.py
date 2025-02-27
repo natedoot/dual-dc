@@ -1,11 +1,15 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import yaml
 import os
+import subprocess
+import datetime
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"  # Needed for flash messages
 
-MASTER_YAML_FILE = "group_vars/NETWORK_SERVICES.yml"  # Define the master YAML file
+MASTER_YAML_FILE = "group_vars/NETWORK_SERVICES.yml"
+CONNECTED_ENDPOINTS_FILE = "group_vars/CONNECTED_ENDPOINTS.yml"
+REPO_PATH = "/workspaces/dual-dc"
 
 def load_yaml(file_path):
     """Loads YAML data from a file."""
@@ -15,9 +19,32 @@ def load_yaml(file_path):
         return yaml.safe_load(f) or {}
 
 def save_yaml(file_path, data):
-    """Saves YAML data to a file."""
+    """Ensures the directory exists and saves YAML data to the file."""
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)  # Create the directory if it doesn't exist
     with open(file_path, "w") as f:
         yaml.dump(data, f, default_flow_style=False, sort_keys=False)
+    commit_changes(file_path)  # Automatically commit changes
+
+def commit_changes(file_path):
+    """Commits changes to the local Git repository."""
+    try:
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        commit_message = f"Auto-commit: Updated {os.path.basename(file_path)} at {timestamp}"
+
+        subprocess.run(["git", "-C", REPO_PATH, "add", file_path], check=True)
+        subprocess.run(["git", "-C", REPO_PATH, "commit", "-m", commit_message], check=True)
+        flash(f"Changes to {os.path.basename(file_path)} committed successfully.", "success")
+
+    except subprocess.CalledProcessError as e:
+        flash(f"Git commit failed: {str(e)}", "danger")
+
+def push_to_remote():
+    """Pushes committed changes to the remote repository manually."""
+    try:
+        subprocess.run(["git", "-C", REPO_PATH, "push", "origin", "main"], check=True)  # Adjust branch if needed
+        flash("Changes pushed to remote repository successfully.", "success")
+    except subprocess.CalledProcessError as e:
+        flash(f"Git push failed: {str(e)}", "danger")
 
 def append_to_yaml(master_file, network_services_key, vrf_name, new_svi):
     """Appends SVI data to the specified tenant and VRF in the master YAML file,
@@ -133,18 +160,27 @@ def append_to_connected_endpoints(file_path, server_name, endpoint_ports, switch
     save_yaml(file_path, data)
     flash(f"Connected endpoint {server_name} added successfully!", "success")
 
-@app.route("/", methods=["GET", "POST"])
-def index():
-    master_yaml = load_yaml(MASTER_YAML_FILE)
-    tenants = sorted(master_yaml.keys())  # Get list of existing tenants
+@app.route("/")
+def landing_page():
+    """Landing page that links to different forms."""
+    return render_template("landing_page.html")
 
-    # Get a list of ALL VRFs across ALL tenants
+@app.route("/network-services", methods=["GET", "POST"])
+def network_services():
+    master_yaml = load_yaml(MASTER_YAML_FILE)
+
+    # Step 1: Extract list of tenants (top-level keys)
+    tenants = sorted(master_yaml.keys())
+
+    # Step 2: Extract all VRFs from all tenants
     all_vrfs = set()
-    for tenant_list in master_yaml.values():
-        if isinstance(tenant_list, list):
-            for tenant in tenant_list:
-                if "vrfs" in tenant and isinstance(tenant["vrfs"], list):
-                    all_vrfs.update(vrf["name"] for vrf in tenant["vrfs"])
+    for tenant_name, tenant_list in master_yaml.items():
+        if isinstance(tenant_list, list) and len(tenant_list) > 0:
+            tenant = tenant_list[0]  # Assuming first element contains VRFs
+            if "vrfs" in tenant and isinstance(tenant["vrfs"], list):
+                for vrf in tenant["vrfs"]:
+                    if isinstance(vrf, dict) and "name" in vrf:
+                        all_vrfs.add(vrf["name"])
 
     if request.method == "POST":
         network_services_key = request.form.get("business_unit")  # Tenant Key
@@ -166,13 +202,13 @@ def index():
 
         if not (network_services_key and vrf_name and vlan_id and svi_name and ip_address and enabled):
             flash("All fields are required!", "danger")
-            return redirect(url_for("index"))
+            return redirect(url_for("network_services"))
 
         try:
             vlan_id = int(vlan_id)
         except ValueError:
             flash("VLAN ID must be an integer.", "danger")
-            return redirect(url_for("index"))
+            return redirect(url_for("network_services"))
 
         # Convert enabled from string to boolean
         enabled = True if enabled.lower() == "true" else False
@@ -185,9 +221,10 @@ def index():
         }
 
         append_to_yaml(MASTER_YAML_FILE, network_services_key, vrf_name, new_svi)
-        return redirect(url_for("index"))
+        return redirect(url_for("network_services"))
 
-    return render_template("form.html", tenants=tenants, all_vrfs=sorted(all_vrfs))
+    return render_template("network_services_form.html", tenants=tenants, all_vrfs=sorted(all_vrfs))
+
 
 @app.route("/connected-endpoints", methods=["GET", "POST"])
 def connected_endpoints():
@@ -211,6 +248,11 @@ def connected_endpoints():
         return redirect(url_for("connected_endpoints"))
 
     return render_template("connected_endpoints_form.html")
+
+@app.route("/push-to-remote", methods=["POST"])
+def push_remote():
+    push_to_remote()
+    return redirect(url_for("landing_page"))
 
 if __name__ == "__main__":
     app.run(debug=True)
