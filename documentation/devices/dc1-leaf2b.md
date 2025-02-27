@@ -236,6 +236,7 @@ vlan internal order ascending range 1006 1199
 | 21 | VRF11_VLAN21 | - |
 | 22 | VRF11_VLAN22 | - |
 | 100 | VRF10_VLAN100 | - |
+| 200 | VRF10_VLAN200 | - |
 | 2000 | 9504_BGP_Transit1 | - |
 | 2001 | 9504_BGP_Transit2 | - |
 | 2002 | 9504_BGP_Transit3 | - |
@@ -265,6 +266,9 @@ vlan 22
 !
 vlan 100
    name VRF10_VLAN100
+!
+vlan 200
+   name VRF10_VLAN200
 !
 vlan 2000
    name 9504_BGP_Transit1
@@ -314,7 +318,7 @@ vlan 4094
 | Ethernet3 | MLAG_dc1-leaf2a_Ethernet3 | *trunk | *- | *- | *MLAG | 3 |
 | Ethernet4 | MLAG_dc1-leaf2a_Ethernet4 | *trunk | *- | *- | *MLAG | 3 |
 | Ethernet5 | SERVER_dc1-leaf2-server1_Ethernet2 | *trunk | *11-12,21-22 | *4092 | *- | 5 |
-| Ethernet8 | L2_dc1-leaf2c_Ethernet2 | *trunk | *11-12,21-22,100,2000-2003,3401-3402 | *- | *- | 8 |
+| Ethernet8 | L2_dc1-leaf2c_Ethernet2 | *trunk | *11-12,21-22,100,200,2000-2003,3401-3402 | *- | *- | 8 |
 | Ethernet9 | ROUTER_dc1-lf-edge2_Etherent1 | - | - | - | - | - |
 
 *Inherited from Port-Channel Interface
@@ -388,7 +392,7 @@ interface Ethernet9
 | --------- | ----------- | ---- | ----- | ----------- | ------------| --------------------- | ------------------ | ------- | -------- |
 | Port-Channel3 | MLAG_dc1-leaf2a_Port-Channel3 | trunk | - | - | MLAG | - | - | - | - |
 | Port-Channel5 | SERVER_dc1-leaf2-server1 | trunk | 11-12,21-22 | 4092 | - | - | - | 5 | - |
-| Port-Channel8 | L2_dc1-leaf2c_Port-Channel1 | trunk | 11-12,21-22,100,2000-2003,3401-3402 | - | - | - | - | 8 | - |
+| Port-Channel8 | L2_dc1-leaf2c_Port-Channel1 | trunk | 11-12,21-22,100,200,2000-2003,3401-3402 | - | - | - | - | 8 | - |
 
 #### Port-Channel Interfaces Device Configuration
 
@@ -414,7 +418,7 @@ interface Port-Channel5
 interface Port-Channel8
    description L2_dc1-leaf2c_Port-Channel1
    no shutdown
-   switchport trunk allowed vlan 11-12,21-22,100,2000-2003,3401-3402
+   switchport trunk allowed vlan 11-12,21-22,100,200,2000-2003,3401-3402
    switchport mode trunk
    switchport
    mlag 8
@@ -480,6 +484,7 @@ interface Loopback11
 | Vlan21 | VRF11_VLAN21 | VRF11 | - | False |
 | Vlan22 | VRF11_VLAN22 | VRF11 | - | False |
 | Vlan100 | VRF10_VLAN100 | VRF10 | - | False |
+| Vlan200 | VRF10_VLAN200 | VRF10 | - | False |
 | Vlan2000 | 9504_BGP_Transit1 | VRF10 | - | True |
 | Vlan2001 | 9504_BGP_Transit2 | VRF10 | - | False |
 | Vlan2002 | 9504_BGP_Transit3 | VRF10 | - | True |
@@ -498,6 +503,7 @@ interface Loopback11
 | Vlan21 |  VRF11  |  -  |  10.10.21.1/24  |  -  |  -  |  -  |
 | Vlan22 |  VRF11  |  -  |  10.10.22.1/24  |  -  |  -  |  -  |
 | Vlan100 |  VRF10  |  10.10.100.1/24  |  -  |  -  |  -  |  -  |
+| Vlan200 |  VRF10  |  10.10.200.1/24  |  -  |  -  |  -  |  -  |
 | Vlan2000 |  VRF10  |  -  |  -  |  -  |  -  |  -  |
 | Vlan2001 |  VRF10  |  192.168.5.5/30  |  -  |  -  |  -  |  -  |
 | Vlan2002 |  VRF10  |  -  |  -  |  -  |  -  |  -  |
@@ -540,6 +546,12 @@ interface Vlan100
    no shutdown
    vrf VRF10
    ip address 10.10.100.1/24
+!
+interface Vlan200
+   description VRF10_VLAN200
+   no shutdown
+   vrf VRF10
+   ip address 10.10.200.1/24
 !
 interface Vlan2000
    description 9504_BGP_Transit1
@@ -609,6 +621,7 @@ interface Vlan4094
 | 21 | 10021 | - | - |
 | 22 | 10022 | - | - |
 | 100 | 10100 | - | - |
+| 200 | 10200 | - | - |
 | 3401 | 13401 | - | - |
 | 3402 | 13402 | - | - |
 
@@ -633,6 +646,7 @@ interface Vxlan1
    vxlan vlan 21 vni 10021
    vxlan vlan 22 vni 10022
    vxlan vlan 100 vni 10100
+   vxlan vlan 200 vni 10200
    vxlan vlan 3401 vni 13401
    vxlan vlan 3402 vni 13402
    vxlan vrf VRF10 vni 10
@@ -750,11 +764,6 @@ ASN Notation: asplain
 | Send community | all |
 | Maximum routes | 12000 |
 
-##### OVERLAY-EXTERNAL-PEERS
-
-| Settings | Value |
-| -------- | ----- |
-
 #### BGP Neighbors
 
 | Neighbor | Remote AS | VRF | Shutdown | Send-community | Maximum-routes | Allowas-in | BFD | RIB Pre-Policy Retain | Route-Reflector Client | Passive | TTL Max Hops |
@@ -796,6 +805,7 @@ ASN Notation: asplain
 | 21 | 172.17.0.6:10021 | 10021:10021<br>remote 10021:10021 | - | - | learned |
 | 22 | 172.17.0.6:10022 | 10022:10022<br>remote 10022:10022 | - | - | learned |
 | 100 | 172.17.0.6:10100 | 10100:10100<br>remote 10100:10100 | - | - | learned |
+| 200 | 172.17.0.6:10200 | 10200:10200<br>remote 10200:10200 | - | - | learned |
 | 3401 | 172.17.0.6:13401 | 13401:13401<br>remote 13401:13401 | - | - | learned |
 | 3402 | 172.17.0.6:13402 | 13402:13402<br>remote 13402:13402 | - | - | learned |
 
@@ -839,7 +849,6 @@ router bgp 65102
    neighbor MLAG-IPv4-UNDERLAY-PEER password 7 <removed>
    neighbor MLAG-IPv4-UNDERLAY-PEER send-community
    neighbor MLAG-IPv4-UNDERLAY-PEER maximum-routes 12000
-   neighbor OVERLAY-EXTERNAL-PEERS peer group
    neighbor 172.16.100.3 peer group IPv4-UNDERLAY-PEERS
    neighbor 172.16.100.3 remote-as 65202
    neighbor 172.16.100.3 description dc2-leaf2b
@@ -895,6 +904,13 @@ router bgp 65102
       rd evpn domain remote 172.17.0.6:10100
       route-target both 10100:10100
       route-target import export evpn domain remote 10100:10100
+      redistribute learned
+   !
+   vlan 200
+      rd 172.17.0.6:10200
+      rd evpn domain remote 172.17.0.6:10200
+      route-target both 10200:10200
+      route-target import export evpn domain remote 10200:10200
       redistribute learned
    !
    vlan 3401

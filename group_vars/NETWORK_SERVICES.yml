@@ -4,13 +4,13 @@ tenant-a:
   vrfs:
   - name: VRF10
     vrf_vni: 10
-    bgp_peer_groups:
-    - name: OVERLAY-EXTERNAL-PEERS
-      nodes:
-      - dc1-leaf2a
-      - dc1-leaf2b
-      - dc2-leaf2a
-      - dc2-leaf2b
+    # bgp_peer_groups:
+    # - name: OVERLAY-EXTERNAL-PEERS
+    #   nodes:
+    #   - dc1-leaf2a
+    #   - dc1-leaf2b
+    #   - dc2-leaf2a
+    #   - dc2-leaf2b
     vtep_diagnostic:
       loopback: 10
       loopback_ip_range: 172.255.10.0/27
@@ -55,6 +55,10 @@ tenant-a:
       name: VRF10_VLAN100
       ip_address: 10.10.100.1/24
       enabled: true
+    - id: 200
+      name: VRF10_VLAN200
+      ip_address: 10.10.200.1/24
+      enabled: true
   - name: VRF11
     vrf_vni: 11
     vtep_diagnostic:
@@ -74,6 +78,7 @@ tenant-a:
     name: L2_VLAN3401
   - id: 3402
     name: L2_VLAN3402
+
 tenant-b:
 - name: tenant-b
   mac_vrf_vni_base: 10000
