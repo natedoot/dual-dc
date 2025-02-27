@@ -86,6 +86,23 @@ servers:
     spanning_tree_portfast: edge
     port_channel:
       mode: active
+- name: dc1-server3
+  adapters:
+  - endpoint_ports:
+    - Ethernet1
+    - Ethernet2
+    switch_ports:
+    - Ethernet10
+    - Ethernet11
+    switches:
+    - dc1-leaf2a
+    - dc1-leaf2b
+    vlans: '200'
+    native_vlan: 4092
+    mode: trunk
+    spanning_tree_portfast: edge
+    port_channel:
+      mode: active
 routers:
 - name: dc1-lf-edge1
   adapters:
