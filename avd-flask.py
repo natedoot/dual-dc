@@ -221,7 +221,7 @@ def network_services():
         }
 
         append_to_yaml(MASTER_YAML_FILE, network_services_key, vrf_name, new_svi)
-        return redirect(url_for("network_services"))
+        return redirect(url_for("landing_page"))
 
     return render_template("network_services_form.html", tenants=tenants, all_vrfs=sorted(all_vrfs))
 
@@ -245,7 +245,7 @@ def connected_endpoints():
             return redirect(url_for("connected_endpoints"))
 
         append_to_connected_endpoints(CONNECTED_ENDPOINTS_FILE, server_name, endpoint_ports, switch_ports, switches, vlans, native_vlan, mode, portfast, port_channel_desc, port_channel_mode)
-        return redirect(url_for("connected_endpoints"))
+        return redirect(url_for("landing_page"))
 
     return render_template("connected_endpoints_form.html")
 
